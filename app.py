@@ -209,12 +209,13 @@ dash_app.layout = html.Div(    [
                             html.Br(),
                             html.H3("Chatbot",style={"text-align":"center"}), 
                             html.P("It is often a hard process to get a match - there are only so many profiles that you will swipe right on, and of the profiles that you like, not everyone will match with you. For those that match, ghosting is a very common occurrence where there is no response after the inital message. Perhaps this is influenced by what the opening message is? "),
-                            html.P("A LLM (Large language model) was built and tuned based on the initial opening messages and whether a response was achieved. It aims to predict what are the most successful opening lines in terms of getting a response from your match - try it below for yourself!"),
+                            html.P("A LLM (Large language model) was built and tuned based on the initial opening messages and whether a response was achieved. BERT was chosen as our langugage model that will be fine tuned by our custom tinder dataset, as it excels in sentiment analysis - perhaps it will also work for classifying the senitment of your match! Try it below for yourself!"),
                             dcc.Textarea(
-        placeholder='Enter a value...',
-        value='This is a TextArea component',
-        style={'width': '100%'}
+        id='textarea-example',
+        value='Test your best opening line....',
+        style={'width': '80%', 'height': 50},
     ),
+    html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'})
             ]),
             ]
         ),
@@ -275,6 +276,13 @@ def update_charts(match_value,swipe_value):
     swipe_rate_fig.update_yaxes(title_text='Swipe right percentage')
     return match_rate_fig, swipe_rate_fig
 
+
+@dash_app.callback(
+    Output('textarea-example-output', 'children'),
+    Input('textarea-example', 'value')
+)
+def update_output(value):
+    return 'You have entered: \n{}'.format(value)
 
 
 #############################################################################################################################
