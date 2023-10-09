@@ -280,7 +280,7 @@ def update_charts(match_value,swipe_value):
 #############################################################################################################################
 
 if __name__ == '__main__':
-    dash_app.run_server("0.0.0.0", 8000, debug = True)
+    dash_app.run_server(debug = True)
 
  # app = dash_app.server
 
