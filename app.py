@@ -51,7 +51,7 @@ def predict_sentiment(text, model, tokenizer, device, max_length=128):
     with torch.no_grad():
         outputs = model(input_ids=input_ids, attention_mask=attention_mask)
         _, preds = torch.max(outputs, dim=1)
-    return "positive" if preds.item() == 1 else "negative"
+    return "Congratulations, you will likely get a response!" if preds.item() == 1 else "Sorry, better luck next time...you have been ignored :( "
 
 #from PIL import Image # new import
 external_stylesheets = [dbc.themes.MORPH,
