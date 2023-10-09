@@ -16,7 +16,7 @@ from dash import dash_table
 import dash_bootstrap_components as dbc
 import os
 import base64 
-from PIL import Image # new import
+#from PIL import Image # new import
 external_stylesheets = [dbc.themes.MORPH,
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
                         ]
@@ -190,7 +190,6 @@ dash_app.layout = html.Div(    [
                             html.Br(),
                             html.H3("Word clouds",style={"text-align":"center"}), 
                             html.P("Looking at the most common words between males and females, you can see that the most common word used was 'Haha' and 'Lol' respectively. There are some other interesting words - 'gif','width' and 'height' are when gifs are used - it seems that gif usage is higher amongst males than female! Do you spot any other interesting words?"),
-                            html.Img(word_cloud_female),
                             html.Div([
     dcc.Tabs([
         dcc.Tab(label='Male', children=[
