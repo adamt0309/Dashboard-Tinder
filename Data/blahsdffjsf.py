@@ -16,6 +16,42 @@ from dash import dash_table
 import dash_bootstrap_components as dbc
 import os
 
+import torch
+from transformers import BertTokenizer, BertModel
+from torch import nn
+
+class BERTClassifier(nn.Module):
+    def __init__(self, bert_model_name, num_classes):
+        super(BERTClassifier, self).__init__()
+        self.bert = BertModel.from_pretrained(bert_model_name)
+        self.dropout = nn.Dropout(0.1)
+        self.fc = nn.Linear(self.bert.config.hidden_size, num_classes)
+
+    def forward(self, input_ids, attention_mask):
+        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
+        pooled_output = outputs.pooler_output
+        x = self.dropout(pooled_output)
+        logits = self.fc(x)
+        return logits
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+bert_model_name = 'bert-base-uncased'
+tokenizer = BertTokenizer.from_pretrained(bert_model_name)
+
+model = BERTClassifier(bert_model_name, 2)
+model.load_state_dict(torch.load("bert_classifier.pth",  map_location=torch.device('cpu')))
+#model.to(device)
+
+def predict_sentiment(text, model, tokenizer, device, max_length=128):
+    model.eval()
+    encoding = tokenizer(text, return_tensors='pt', max_length=max_length, padding='max_length', truncation=True)
+    input_ids = encoding['input_ids'].to(device)
+    attention_mask = encoding['attention_mask'].to(device)
+
+    with torch.no_grad():
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+        _, preds = torch.max(outputs, dim=1)
+    return "Congratulations, you will likely get a response!" if preds.item() == 1 else "Sorry, better luck next time...you have been ignored :( "
 
 #from PIL import Image # new import
 external_stylesheets = [dbc.themes.MORPH,
@@ -174,13 +210,13 @@ dash_app.layout = html.Div(    [
                 html.Br(),
                 html.H3("Swipes",style={"text-align":"center"}),
                 html.P("One of the most interesting piece of statistics is how discerning a tinder user is. Do they rarely swipe right? Or will their hands likely develop RSI from all the repetitive movements? And how different is that for different demographics? "),
-                dcc.Dropdown(['gender','sexuality','AgeofUserGroup','educationLevel','ProfileShowsSchool','ProfileShowsJob'],id='swipe-rate-dropdown',value='gender'),
+                dcc.Dropdown(['gender','sexuality','AgeofUserGroup','educationLevel'],id='swipe-rate-dropdown',value='gender'),
                 dcc.Graph(id="swipe-rate-chart"),
                 html.Label(), 
                 html.Br(),
                 html.H3("Matches",style={"text-align":"center"}),
                 html.P("Of course, when one looks at Tinder, one of the key things people care about is match rate - how many swipes are needed before there is a match? Is there a difference between male and female?"),
-                dcc.Dropdown(['gender','sexuality','AgeofUserGroup','educationLevel','ProfileShowsSchool','ProfileShowsJob'],id='match-rate-dropdown',value='gender'),
+                dcc.Dropdown(['gender','sexuality','AgeofUserGroup','educationLevel'],id='match-rate-dropdown',value='gender'),
                 dcc.Graph(id="match-rate-chart"),
       ]),
 
@@ -209,7 +245,18 @@ dash_app.layout = html.Div(    [
                             html.P("What about emojis usage? What are the most common emojis? Are there any differences between males and females?"),
                             dcc.Graph(figure=fig_emojis),
                             html.Br(),
-    ]),
+                            html.H3("Chatbot",style={"text-align":"center"}), 
+                            html.P("It is often a hard process to get a match - there are only so many profiles that you will swipe right on, and of the profiles that you like, not everyone will match with you. For those that match, ghosting is a very common occurrence where there is no response after the inital message. Perhaps this is influenced by what the opening message is? "),
+                            html.P("A LLM (Large language model) was built and tuned based on the initial opening messages and whether a response was achieved. BERT was chosen as our langugage model that will be fine tuned by our custom tinder dataset, as it excels in sentiment analysis - perhaps it will also work for classifying the senitment of your match! Try it below for yourself!"),
+                            dcc.Textarea(
+        id='textarea-example',
+        value='Test your best opening line....',
+        style={'width': '80%', 'height': 50},
+    ),
+    html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
+    html.Br(),
+    html.P("Despite our best efforts and extensive hyperparameter tuning, the accuracy of our model did not exceed 65 percent so take the results of the opening line rater with a grain of salt! A response most likely depends on many more factors than just the content - gender, age, time of day of message, and sometimes just random chance!")
+            ]),
             ]
         ),
     ### This is a placeholder for links and sources of everythign
@@ -269,6 +316,14 @@ def update_charts(match_value,swipe_value):
     swipe_rate_fig.update_yaxes(title_text='Swipe right percentage')
     return match_rate_fig, swipe_rate_fig
 
+
+@dash_app.callback(
+    Output('textarea-example-output', 'children'),
+    Input('textarea-example', 'value')
+)
+def update_output(value):
+    sentiment = predict_sentiment(value, model, tokenizer, device)
+    return 'You will get a response of: \n{}'.format(sentiment)
 
 
 #############################################################################################################################

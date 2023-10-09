@@ -171,7 +171,6 @@ code/train.csv
 code/validate.csv
 code/test.csv
 code/messages_joined.csv
-code/descriptive_stats.csv
 Data/tinder_data.json
 
 bert_classifier.pth
