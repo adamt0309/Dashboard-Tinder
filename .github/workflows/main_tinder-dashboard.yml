@@ -20,13 +20,14 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v1
         with:
-          python-version: '3.8'
+          python-version: '3.10'
 
       - name: Set up Git LFS
         run: |
           git lfs install
           git lfs fetch --all
           git lfs checkout
+
 
       - name: Create and start virtual environment
         run: |
@@ -66,4 +67,4 @@ jobs:
         with:
           app-name: 'tinder-dashboard'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CE5910D71A67461A92DC3DA03F5A55BA }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_80540371AAC34B1FA567C7568DF8D7B8 }}
