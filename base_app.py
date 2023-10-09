@@ -105,7 +105,6 @@ fig_emojis.add_trace(fig2['data'][0], row=2, col=1)
 
 ## App instance
 dash_app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app = dash_app.server
 
 #############################################################################################################################
 ################################################## APP LAYOUT ###############################################################
@@ -280,6 +279,8 @@ def update_charts(match_value,swipe_value):
 ################################################### LAUNCH APP###############################################################
 #############################################################################################################################
 
-if __name__ == '__main__':
-    dash_app.run_server(host='0.0.0.0', port=int(os.environ.get('PORT', 8050)))
+#if __name__ == '__main__':
+ #   dash_app.run_server(host='0.0.0.0', port=int(os.environ.get('PORT', 8050)))
+
+app = dash_app.server
 
