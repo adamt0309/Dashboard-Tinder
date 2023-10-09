@@ -279,9 +279,9 @@ def update_charts(match_value,swipe_value):
 ################################################### LAUNCH APP###############################################################
 #############################################################################################################################
 
-#if __name__ == '__main__':
- #   dash_app.run_server(host='0.0.0.0', port=int(os.environ.get('PORT', 8050)))
+if __name__ == '__main__':
+    dash_app.run_server()
 
-app = dash_app.server
+ # app = dash_app.server
 
  #   tell if this works
