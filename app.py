@@ -18,6 +18,40 @@ import os
 
 import torch
 from transformers import BertTokenizer, BertModel
+from torch import nn
+
+class BERTClassifier(nn.Module):
+    def __init__(self, bert_model_name, num_classes):
+        super(BERTClassifier, self).__init__()
+        self.bert = BertModel.from_pretrained(bert_model_name)
+        self.dropout = nn.Dropout(0.1)
+        self.fc = nn.Linear(self.bert.config.hidden_size, num_classes)
+
+    def forward(self, input_ids, attention_mask):
+        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
+        pooled_output = outputs.pooler_output
+        x = self.dropout(pooled_output)
+        logits = self.fc(x)
+        return logits
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+bert_model_name = 'bert-base-uncased'
+tokenizer = BertTokenizer.from_pretrained(bert_model_name)
+
+model = BERTClassifier(bert_model_name, 2)
+model.load_state_dict(torch.load("bert_classifier.pth",  map_location=torch.device('cpu')))
+#model.to(device)
+
+def predict_sentiment(text, model, tokenizer, device, max_length=128):
+    model.eval()
+    encoding = tokenizer(text, return_tensors='pt', max_length=max_length, padding='max_length', truncation=True)
+    input_ids = encoding['input_ids'].to(device)
+    attention_mask = encoding['attention_mask'].to(device)
+
+    with torch.no_grad():
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+        _, preds = torch.max(outputs, dim=1)
+    return "positive" if preds.item() == 1 else "negative"
 
 #from PIL import Image # new import
 external_stylesheets = [dbc.themes.MORPH,
@@ -238,7 +272,7 @@ dash_app.layout = html.Div(    [
         html.P("[1] Changing habits of dating was obtained from https://www.statista.com/"),
         html.P("[2] Information regarding downloads of different dating apps was obtained from https://www.statista.com/"),
         html.P("[3] Changing habits of dating was obtained from https://www.swipestats.io/"),
-        html.P("[4] Code used to generate the dashboard can be found in my github, https://github.com/adamt0309/Tinder-Dashboard"),
+        html.P("[4] Code used to generate the dashboard can be found in my github, https://github.com/adamt0309/Dashboard-Tinder"),
         
     ] ),
     
@@ -288,7 +322,8 @@ def update_charts(match_value,swipe_value):
     Input('textarea-example', 'value')
 )
 def update_output(value):
-    return 'You have entered: \n{}'.format(value)
+    sentiment = predict_sentiment(value, model, tokenizer, device)
+    return 'You will get a response of: \n{}'.format(sentiment)
 
 
 #############################################################################################################################
