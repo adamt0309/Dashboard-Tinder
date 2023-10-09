@@ -15,6 +15,10 @@ from dash.dependencies import Input, Output
 from dash import dash_table
 import dash_bootstrap_components as dbc
 import os
+
+import torch
+from transformers import BertTokenizer, BertModel
+
 #from PIL import Image # new import
 external_stylesheets = [dbc.themes.MORPH,
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
