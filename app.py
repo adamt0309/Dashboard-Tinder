@@ -219,7 +219,9 @@ dash_app.layout = html.Div(    [
         value='Test your best opening line....',
         style={'width': '80%', 'height': 50},
     ),
-    html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'})
+    html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
+    html.Br(),
+    html.P("Despite our best efforts and extensive hyperparameter tuning, the accuracy of our model did not exceed 65 percent so take the results of the opening line rater with a grain of salt! A response most likely depends on many more factors than just the content - gender, age, time of day of message, and sometimes just random chance!")
             ]),
             ]
         ),
