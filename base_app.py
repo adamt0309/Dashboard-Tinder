@@ -15,7 +15,6 @@ from dash.dependencies import Input, Output
 from dash import dash_table
 import dash_bootstrap_components as dbc
 import os
-import base64 
 #from PIL import Image # new import
 external_stylesheets = [dbc.themes.MORPH,
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
@@ -282,5 +281,5 @@ def update_charts(match_value,swipe_value):
 #############################################################################################################################
 
 if __name__ == '__main__':
-    dash_app.run_server(debug=True)
+    dash_app.run_server(host='0.0.0.0', port=int(os.environ.get('PORT', 8050)))
 
