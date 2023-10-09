@@ -14,7 +14,6 @@ from dash import html
 from dash.dependencies import Input, Output
 from dash import dash_table
 import dash_bootstrap_components as dbc
-from dash_iconify import DashIconify
 import os
 import base64 
 from PIL import Image # new import
@@ -25,12 +24,12 @@ external_stylesheets = [dbc.themes.MORPH,
 
 
 
-tinder_logo = Image.open('./Resources/tinder_logo.png')
-bumble_logo = Image.open('./Resources/bumble.png')
-badoo_logo = Image.open('./Resources/badoo.png')
-heart=Image.open("./Resources/heart.png")
-word_cloud_female = Image.open('./Resources/word_cloud_gender_F.png')
-word_cloud_male = Image.open('./Resources/word_cloud_gender_M.png')
+#tinder_logo = Image.open('./Resources/tinder_logo.png')
+#bumble_logo = Image.open('./Resources/bumble.png')
+#badoo_logo = Image.open('./Resources/badoo.png')
+#heart=Image.open("./Resources/heart.png")
+#word_cloud_female = Image.open('./Resources/word_cloud_gender_F.png')
+#word_cloud_male = Image.open('./Resources/word_cloud_gender_M.png')
 
 #############################################################################################################################
 ####################################DATA MANIPULATION PREPPING FOR DASHBOARD#################################################
@@ -45,14 +44,14 @@ dating_trend_fig = px.bar(dating_trends_melt, x="variable", y="value", color="Ca
     xaxis_title="Year", yaxis_title="Percentage"
 )
 dating_trend_fig.layout.yaxis.tickformat = ',.0%'
-dating_trend_fig.add_layout_image(
-    dict(
-        source=heart,
-        xref="paper", yref="paper",
-        x=0.5, y=0.5,
-        sizex=0.3, sizey=0.3
-    )
-)
+# dating_trend_fig.add_layout_image(
+#     dict(
+#         source=heart,
+#         xref="paper", yref="paper",
+#         x=0.5, y=0.5,
+#         sizex=0.3, sizey=0.3
+#     )
+# )
 dating_trend_fig.update_layout(title={'font': {'size': 40}})
 
 
@@ -60,33 +59,33 @@ dating_trend_fig.update_layout(title={'font': {'size': 40}})
 
 downloads_fig = px.bar(df_datingapps, x="Apps ", y="Downloads",title='Dating app downloads globally in 2022', color="Apps ")
 downloads_fig.update_yaxes(title_text='Downloads(in millions)')
-downloads_fig.add_layout_image(
-    dict(
-        source=tinder_logo,
-        xref="x", yref="paper",
-        x='Tinder', y=1.1,
-        sizex=1, sizey=1,
-        xanchor="center"
-    )
-)
-downloads_fig.add_layout_image(
-    dict(
-        source=bumble_logo,
-        xref="x", yref="paper",
-        x='Bumble', y=1.1,
-        sizex=1, sizey=1,
-        xanchor="center"
-    )
-)
-downloads_fig.add_layout_image(
-    dict(
-        source=badoo_logo,
-        xref="x", yref="paper",
-        x="Badoo", y=1.1,
-        sizex=1, sizey=1,
-        xanchor="center"
-    )
-)
+# downloads_fig.add_layout_image(
+#     dict(
+#         source=tinder_logo,
+#         xref="x", yref="paper",
+#         x='Tinder', y=1.1,
+#         sizex=1, sizey=1,
+#         xanchor="center"
+#     )
+# )
+# downloads_fig.add_layout_image(
+#     dict(
+#         source=bumble_logo,
+#         xref="x", yref="paper",
+#         x='Bumble', y=1.1,
+#         sizex=1, sizey=1,
+#         xanchor="center"
+#     )
+# )
+# downloads_fig.add_layout_image(
+#     dict(
+#         source=badoo_logo,
+#         xref="x", yref="paper",
+#         x="Badoo", y=1.1,
+#         sizex=1, sizey=1,
+#         xanchor="center"
+#     )
+# )
 
 avg_match_rate_by_gender = df.groupby('gender')['AverageMatchRate'].mean()
 avg_match_rate_by_sexuality = df.groupby('sexuality')['AverageMatchRate'].mean()
